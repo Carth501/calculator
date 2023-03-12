@@ -18,6 +18,8 @@ export default function calculate(obj, buttonName) {
       total: null,
       next: null,
       operation: null,
+      lastNext: null,
+      lastOp: null
     };
   }
 
@@ -46,27 +48,6 @@ export default function calculate(obj, buttonName) {
     };
   }
 
-  if (buttonName === "%") {
-    if (obj.operation && obj.next) {
-      const result = operate(obj.total, obj.next, obj.operation);
-      return {
-        total: Big(result)
-          .div(Big("100"))
-          .toString(),
-        next: null,
-        operation: null,
-      };
-    }
-    if (obj.next) {
-      return {
-        next: Big(obj.next)
-          .div(Big("100"))
-          .toString(),
-      };
-    }
-    return {};
-  }
-
   if (buttonName === ".") {
     if (obj.next) {
       // ignore a . if the next number already has one
@@ -84,6 +65,12 @@ export default function calculate(obj, buttonName) {
         total: operate(obj.total, obj.next, obj.operation),
         next: null,
         operation: null,
+        lastNext: obj.next,
+        lastOp: obj.operation
+      };
+    } else if (obj.lastNext && obj.lastOp){
+      return {
+        total: operate(obj.total, obj.lastNext, obj.lastOp),
       };
     } else {
       // '=' with no operation, nothing to do
@@ -102,12 +89,6 @@ export default function calculate(obj, buttonName) {
   }
 
   // Button must be an operation
-
-  // When the user presses an operation button without having entered
-  // a number first, do nothing.
-  // if (!obj.next && !obj.total) {
-  //   return {};
-  // }
 
   // User pressed an operation button and there is an existing operation
   if (obj.operation) {

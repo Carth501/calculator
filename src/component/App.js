@@ -9,6 +9,8 @@ export default class App extends React.Component {
     total: null,
     next: null,
     operation: null,
+    lastNext: null,
+    lastOp: null
   };
 
   handleClick = buttonName => {
